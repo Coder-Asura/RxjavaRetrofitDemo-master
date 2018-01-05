@@ -1,15 +1,15 @@
 package com.example.retrofit.entity.api;
 
 import com.example.retrofit.HttpUploadService;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.Api.BaseApi;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener.HttpOnNextListener;
 
+import io.reactivex.Observable;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Retrofit;
-import rx.Observable;
 
 /**
  * 上传请求api
@@ -38,9 +38,9 @@ public class UploadApi extends BaseApi {
     @Override
     public Observable getObservable(Retrofit retrofit) {
         HttpUploadService service = retrofit.create(HttpUploadService.class);
-        RequestBody uid= RequestBody.create(MediaType.parse("text/plain"), "4811420");
+        RequestBody uid = RequestBody.create(MediaType.parse("text/plain"), "4811420");
         RequestBody key = RequestBody.create(MediaType.parse("text/plain"), "cfed6cc8caad0d79ea56d917376dc4df");
-        return service.uploadImage(uid,key,getPart());
+        return service.uploadImage(uid, key, getPart());
     }
 
 }

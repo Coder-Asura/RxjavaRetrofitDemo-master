@@ -1,20 +1,21 @@
 package com.wzgiceman.rxretrofitlibrary.retrofit_rx.Api;
 
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.HttpTimeException;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener.HttpOnNextListener;
 
 import java.lang.ref.SoftReference;
 
+import io.reactivex.Observable;
+import io.reactivex.functions.Function;
 import retrofit2.Retrofit;
-import rx.Observable;
-import rx.functions.Func1;
+
 
 /**
  * 请求数据统一封装类
  * Created by WZG on 2016/7/16.
  */
-public abstract class BaseApi<T> implements Func1<BaseResultEntity<T>, T> {
+public abstract class BaseApi<T> implements Function<BaseResultEntity<T>, T> {
     //rx生命周期管理
     private SoftReference<RxAppCompatActivity> rxAppCompatActivity;
     /*回调*/
@@ -28,7 +29,7 @@ public abstract class BaseApi<T> implements Func1<BaseResultEntity<T>, T> {
     /*基础url*/
     private String baseUrl = "https://www.izaodao.com/Api/";
     /*方法-如果需要缓存必须设置这个参数；不需要不用設置*/
-    private String method="";
+    private String method = "";
     /*超时时间-默认6秒*/
     private int connectionTime = 6;
     /*有网情况下的本地缓存时间默认60秒*/
@@ -180,7 +181,7 @@ public abstract class BaseApi<T> implements Func1<BaseResultEntity<T>, T> {
     }
 
     @Override
-    public T call(BaseResultEntity<T> httpResult) {
+    public T apply(BaseResultEntity<T> httpResult) {
         if (httpResult.getRet() == 0) {
             throw new HttpTimeException(httpResult.getMsg());
         }

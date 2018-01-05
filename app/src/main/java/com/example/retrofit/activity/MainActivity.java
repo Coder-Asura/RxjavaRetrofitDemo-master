@@ -18,7 +18,7 @@ import com.example.retrofit.entity.resulte.SubjectResulte;
 import com.example.retrofit.entity.resulte.UploadResulte;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.Api.BaseResultEntity;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.http.HttpManager;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener.HttpOnNextListener;
@@ -29,18 +29,20 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
+
 
 public class MainActivity extends RxAppCompatActivity implements View.OnClickListener {
     private TextView tvMsg;
@@ -56,8 +58,8 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
         findViewById(R.id.btn_rx).setOnClickListener(this);
         findViewById(R.id.btn_rx_mu_down).setOnClickListener(this);
         findViewById(R.id.btn_rx_uploade).setOnClickListener(this);
-        img=(ImageView)findViewById(R.id.img);
-        progressBar=(NumberProgressBar)findViewById(R.id.number_progress_bar);
+        img = (ImageView) findViewById(R.id.img);
+        progressBar = (NumberProgressBar) findViewById(R.id.number_progress_bar);
     }
 
 
@@ -73,8 +75,8 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
             case R.id.btn_rx_uploade:
                 uploadeDo();
                 break;
-            case  R.id.btn_rx_mu_down:
-                Intent intent=new Intent(this,DownLaodActivity.class);
+            case R.id.btn_rx_mu_down:
+                Intent intent = new Intent(this, DownLaodActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -84,7 +86,7 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
 
     //    完美封装简化版
     private void simpleDo() {
-        SubjectPostApi postEntity = new SubjectPostApi(simpleOnNextListener,this);
+        SubjectPostApi postEntity = new SubjectPostApi(simpleOnNextListener, this);
         postEntity.setAll(true);
         HttpManager manager = HttpManager.getInstance();
         manager.doHttpDeal(postEntity);
@@ -100,10 +102,11 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
         @Override
         public void onCacheNext(String cache) {
             /*缓存回调*/
-            Gson gson=new Gson();
-            java.lang.reflect.Type type = new TypeToken<BaseResultEntity<List<SubjectResulte>>>() {}.getType();
-            BaseResultEntity resultEntity= gson.fromJson(cache, type);
-            tvMsg.setText("缓存返回：\n"+resultEntity.getData().toString() );
+            Gson gson = new Gson();
+            java.lang.reflect.Type type = new TypeToken<BaseResultEntity<List<SubjectResulte>>>() {
+            }.getType();
+            BaseResultEntity resultEntity = gson.fromJson(cache, type);
+            tvMsg.setText("缓存返回：\n" + resultEntity.getData().toString());
         }
 
         /*用户主动调用，默认是不需要覆写该方法*/
@@ -124,37 +127,37 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
 
     /*********************************************文件上传***************************************************/
 
-  private void uploadeDo(){
-      File file=new File("/storage/emulated/0/Download/11.jpg");
-      RequestBody requestBody=RequestBody.create(MediaType.parse("image/jpeg"),file);
-      MultipartBody.Part part= MultipartBody.Part.createFormData("file_name", file.getName(), new ProgressRequestBody(requestBody,
-              new UploadProgressListener() {
-          @Override
-          public void onProgress(final long currentBytesCount, final long totalBytesCount) {
+    private void uploadeDo() {
+        File file = new File("/storage/emulated/0/Download/11.jpg");
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("file_name", file.getName(), new ProgressRequestBody(requestBody,
+                new UploadProgressListener() {
+                    @Override
+                    public void onProgress(final long currentBytesCount, final long totalBytesCount) {
 
                 /*回到主线程中，可通过timer等延迟或者循环避免快速刷新数据*/
-              Observable.just(currentBytesCount).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Long>() {
+                        Observable.just(currentBytesCount).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
 
-                  @Override
-                  public void call(Long aLong) {
-                      tvMsg.setText("提示:上传中");
-                      progressBar.setMax((int) totalBytesCount);
-                      progressBar.setProgress((int) currentBytesCount);
-                  }
-              });
-          }
-      }));
-      UploadApi uplaodApi = new UploadApi(httpOnNextListener,this);
-      uplaodApi.setPart(part);
-      HttpManager manager = HttpManager.getInstance();
-      manager.doHttpDeal(uplaodApi);
-  }
+                            @Override
+                            public void accept(Long aLong) {
+                                tvMsg.setText("提示:上传中");
+                                progressBar.setMax((int) totalBytesCount);
+                                progressBar.setProgress((int) currentBytesCount);
+                            }
+                        });
+                    }
+                }));
+        UploadApi uplaodApi = new UploadApi(httpOnNextListener, this);
+        uplaodApi.setPart(part);
+        HttpManager manager = HttpManager.getInstance();
+        manager.doHttpDeal(uplaodApi);
+    }
 
 
     /**
      * 上传回调
      */
-    HttpOnNextListener httpOnNextListener=new HttpOnNextListener<UploadResulte>() {
+    HttpOnNextListener httpOnNextListener = new HttpOnNextListener<UploadResulte>() {
         @Override
         public void onNext(UploadResulte o) {
             tvMsg.setText("成功");
@@ -164,11 +167,10 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
         @Override
         public void onError(Throwable e) {
             super.onError(e);
-            tvMsg.setText("失败："+e.toString());
+            tvMsg.setText("失败：" + e.toString());
         }
 
     };
-
 
 
     /**********************************************************正常不封装使用**********************************/
@@ -177,7 +179,7 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
      * Retrofit加入rxjava实现http请求
      */
     private void onButton9Click() {
-        String BASE_URL="http://www.izaodao.com/Api/";
+        String BASE_URL = "http://www.izaodao.com/Api/";
         //手动创建一个OkHttpClient并设置超时时间
         okhttp3.OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(5, TimeUnit.SECONDS);
@@ -185,7 +187,7 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
         Retrofit retrofit = new Retrofit.Builder()
                 .client(builder.build())
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(BASE_URL)
                 .build();
 
@@ -196,9 +198,9 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
         Observable<RetrofitEntity> observable = apiService.getAllVedioBy(true);
         observable.subscribeOn(Schedulers.io()).unsubscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        new Subscriber<RetrofitEntity>() {
+                        new Observer<RetrofitEntity>() {
                             @Override
-                            public void onCompleted() {
+                            public void onComplete() {
                                 if (pd != null && pd.isShowing()) {
                                     pd.dismiss();
                                 }
@@ -212,21 +214,18 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
                             }
 
                             @Override
-                            public void onNext(RetrofitEntity retrofitEntity) {
-                                tvMsg.setText("无封装：\n" + retrofitEntity.getData().toString());
+                            public void onSubscribe(Disposable d) {
+                                pd.show();
                             }
 
                             @Override
-                            public void onStart() {
-                                super.onStart();
-                                pd.show();
+                            public void onNext(RetrofitEntity retrofitEntity) {
+                                tvMsg.setText("无封装：\n" + retrofitEntity.getData().toString());
                             }
                         }
 
                 );
     }
-
-
 
 
 }
