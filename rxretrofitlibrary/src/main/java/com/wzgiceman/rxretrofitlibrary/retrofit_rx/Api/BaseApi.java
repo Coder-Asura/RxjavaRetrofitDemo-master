@@ -1,7 +1,11 @@
 package com.wzgiceman.rxretrofitlibrary.retrofit_rx.Api;
 
+import android.util.Log;
+
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
-import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.HttpTimeException;
+import com.wzgiceman.rxretrofitlibrary.retrofit_rx.RxRetrofitApp;
+import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
+import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.TokenOutDateException;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener.HttpOnNextListener;
 
 import java.lang.ref.SoftReference;
@@ -19,7 +23,7 @@ public abstract class BaseApi<T> implements Function<BaseResultEntity<T>, T> {
     //rx生命周期管理
     private SoftReference<RxAppCompatActivity> rxAppCompatActivity;
     /*回调*/
-    private SoftReference<HttpOnNextListener> listener;
+    private HttpOnNextListener<T> listener;
     /*是否能取消加载框*/
     private boolean cancel;
     /*是否显示加载框*/
@@ -27,11 +31,11 @@ public abstract class BaseApi<T> implements Function<BaseResultEntity<T>, T> {
     /*是否需要缓存处理*/
     private boolean cache;
     /*基础url*/
-    private String baseUrl = "https://www.izaodao.com/Api/";
+    private String baseUrl = RxRetrofitApp.getBaseUrl();
     /*方法-如果需要缓存必须设置这个参数；不需要不用設置*/
     private String method = "";
     /*超时时间-默认6秒*/
-    private int connectionTime = 6;
+    private int connectionTime = 600;
     /*有网情况下的本地缓存时间默认60秒*/
     private int cookieNetWorkTime = 60;
     /*无网络的情况下本地缓存时间默认30天*/
@@ -41,15 +45,16 @@ public abstract class BaseApi<T> implements Function<BaseResultEntity<T>, T> {
     /*失败后retry延迟*/
     private long retryDelay = 100;
     /*失败后retry叠加延迟*/
-    private long retryIncreaseDelay = 10;
+    private long retryIncreaseDelay = 200;
     /*缓存url-可手动设置*/
     private String cacheUrl;
 
-    public BaseApi(HttpOnNextListener listener, RxAppCompatActivity rxAppCompatActivity) {
+    public BaseApi(HttpOnNextListener<T> listener, RxAppCompatActivity rxAppCompatActivity) {
         setListener(listener);
         setRxAppCompatActivity(rxAppCompatActivity);
         setShowProgress(true);
-        setCache(true);
+        setCache(false);
+        setCancel(false);
     }
 
     /**
@@ -58,7 +63,7 @@ public abstract class BaseApi<T> implements Function<BaseResultEntity<T>, T> {
      * @param retrofit
      * @return
      */
-    public abstract Observable getObservable(Retrofit retrofit);
+    public abstract Observable<BaseResultEntity<T>> getObservable(Retrofit retrofit);
 
 
     public int getCookieNoNetWorkTime() {
@@ -112,7 +117,7 @@ public abstract class BaseApi<T> implements Function<BaseResultEntity<T>, T> {
     }
 
     public void setRxAppCompatActivity(RxAppCompatActivity rxAppCompatActivity) {
-        this.rxAppCompatActivity = new SoftReference(rxAppCompatActivity);
+        this.rxAppCompatActivity = new SoftReference<RxAppCompatActivity>(rxAppCompatActivity);
     }
 
     public boolean isCache() {
@@ -139,12 +144,12 @@ public abstract class BaseApi<T> implements Function<BaseResultEntity<T>, T> {
         this.cancel = cancel;
     }
 
-    public SoftReference<HttpOnNextListener> getListener() {
+    public HttpOnNextListener<T> getListener() {
         return listener;
     }
 
-    public void setListener(HttpOnNextListener listener) {
-        this.listener = new SoftReference(listener);
+    public void setListener(HttpOnNextListener<T> listener) {
+        this.listener = listener;
     }
 
 
@@ -181,11 +186,15 @@ public abstract class BaseApi<T> implements Function<BaseResultEntity<T>, T> {
     }
 
     @Override
-    public T apply(BaseResultEntity<T> httpResult) {
-        if (httpResult.getRet() == 0) {
-            throw new HttpTimeException(httpResult.getMsg());
+    public T apply(BaseResultEntity<T> httpResult) throws Exception {
+        Log.d("ALog", "请求结果：\n" + httpResult.toString());
+        if (httpResult.getStatus() == 1) {
+            return httpResult.getData();
+        } else if (httpResult.getStatus() == 30015) {
+            throw new TokenOutDateException();
+        } else {
+            throw new ApiException(httpResult.getStatus());
         }
-        return httpResult.getData();
     }
 
 

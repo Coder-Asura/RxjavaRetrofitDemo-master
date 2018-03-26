@@ -1,7 +1,9 @@
 package com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener;
 
+import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
 
 import io.reactivex.Observable;
+
 
 /**
  * 成功回调处理
@@ -39,7 +41,7 @@ public abstract class HttpOnNextListener<T> {
      *
      * @param e
      */
-    public void onError(Throwable e) {
+    public void onError(ApiException e) {
 
     }
 
@@ -50,5 +52,12 @@ public abstract class HttpOnNextListener<T> {
 
     }
 
+    /**
+     * 登录token失效
+     *
+     * @param e
+     */
+    public void onLoginTokenTimeOut(Throwable e) {
+    }
 
 }

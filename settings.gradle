@@ -1,1 +1,1 @@
-include ':app', ':rxretrofitlibrary'
+include ':app', ':rxretrofitlibrary',':loading-dialog-library'

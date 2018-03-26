@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">LoadingDialogLibrary</string>
+    <string name="requesting">正在请求中&#8230;</string>
+</resources>

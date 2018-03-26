@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_0">无法描述的错误</string>
+    <string name="error_2">网络中断，请检查您的网络状态</string>
+    <string name="error_3">Gson解析错误</string>
+    <string name="error_default">请求错误，请重试！</string>
+</resources>

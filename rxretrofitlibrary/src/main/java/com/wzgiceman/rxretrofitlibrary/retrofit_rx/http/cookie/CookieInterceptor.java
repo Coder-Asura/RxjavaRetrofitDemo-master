@@ -25,7 +25,7 @@ public class CookieInterceptor implements Interceptor {
     private String url;
 
     public CookieInterceptor(boolean cache, String url) {
-        dbUtil=CookieDbUtil.getInstance();
+        dbUtil= CookieDbUtil.getInstance();
         this.url=url;
         this.cache=cache;
     }

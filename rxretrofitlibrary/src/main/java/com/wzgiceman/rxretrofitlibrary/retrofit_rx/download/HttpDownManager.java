@@ -1,7 +1,7 @@
 package com.wzgiceman.rxretrofitlibrary.retrofit_rx.download;
 
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.download.DownLoadListener.DownloadInterceptor;
-import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.HttpTimeException;
+import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.RetryWhenNetworkException;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.subscribers.ProgressDownSubscriber;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.utils.AppUtil;
@@ -238,7 +238,7 @@ public class HttpDownManager {
                     mappedBuffer.put(buffer, 0, len);
                 }
             } catch (IOException e) {
-                throw new HttpTimeException(e.getMessage());
+                throw new ApiException(e.getMessage());
             } finally {
                 if (inputStream != null) {
                     inputStream.close();
@@ -251,7 +251,7 @@ public class HttpDownManager {
                 }
             }
         } catch (IOException e) {
-            throw new HttpTimeException(e.getMessage());
+            throw new ApiException(e.getMessage());
         }
     }
 

@@ -1,8 +1,8 @@
 package com.wzgiceman.rxretrofitlibrary.retrofit_rx.http.cookie;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 
 /**
  * post請求緩存数据

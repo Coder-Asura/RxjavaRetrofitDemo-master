@@ -38,9 +38,9 @@ public class UploadApi extends BaseApi {
     @Override
     public Observable getObservable(Retrofit retrofit) {
         HttpUploadService service = retrofit.create(HttpUploadService.class);
-        RequestBody uid = RequestBody.create(MediaType.parse("text/plain"), "4811420");
+        RequestBody uid= RequestBody.create(MediaType.parse("text/plain"), "4811420");
         RequestBody key = RequestBody.create(MediaType.parse("text/plain"), "cfed6cc8caad0d79ea56d917376dc4df");
-        return service.uploadImage(uid, key, getPart());
+        return service.uploadImage(uid,key,getPart());
     }
 
 }

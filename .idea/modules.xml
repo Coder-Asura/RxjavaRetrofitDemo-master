@@ -2,9 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RxjavaRetrofitDemo-master.iml" filepath="$PROJECT_DIR$/RxjavaRetrofitDemo-master.iml" />
+      <module fileurl="file://D:\repository\Github\RxjavaRetrofitDemo-master2\RxjavaRetrofitDemo-master.iml" filepath="D:\repository\Github\RxjavaRetrofitDemo-master2\RxjavaRetrofitDemo-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/RxjavaRetrofitDemo-master2.iml" filepath="$PROJECT_DIR$/.idea/RxjavaRetrofitDemo-master2.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\repository\Github\RxjavaRetrofitDemo-master2\app\app.iml" filepath="D:\repository\Github\RxjavaRetrofitDemo-master2\app\app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/loading-dialog-library/loading-dialog-library.iml" filepath="$PROJECT_DIR$/loading-dialog-library/loading-dialog-library.iml" />
       <module fileurl="file://$PROJECT_DIR$/rxretrofitlibrary/rxretrofitlibrary.iml" filepath="$PROJECT_DIR$/rxretrofitlibrary/rxretrofitlibrary.iml" />
+      <module fileurl="file://D:\repository\Github\RxjavaRetrofitDemo-master2\rxretrofitlibrary\rxretrofitlibrary.iml" filepath="D:\repository\Github\RxjavaRetrofitDemo-master2\rxretrofitlibrary\rxretrofitlibrary.iml" />
     </modules>
   </component>
 </project>

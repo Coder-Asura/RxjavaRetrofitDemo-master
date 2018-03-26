@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.Api.BaseResultEntity;
+import com.wzgiceman.rxretrofitlibrary.retrofit_rx.exception.ApiException;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.http.HttpManager;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener.HttpOnNextListener;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener.upload.ProgressRequestBody;
@@ -42,7 +43,6 @@ import okhttp3.RequestBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 
 public class MainActivity extends RxAppCompatActivity implements View.OnClickListener {
     private TextView tvMsg;
@@ -79,6 +79,7 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
                 Intent intent = new Intent(this, DownLaodActivity.class);
                 startActivity(intent);
                 break;
+            default:
         }
     }
 
@@ -111,7 +112,7 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
 
         /*用户主动调用，默认是不需要覆写该方法*/
         @Override
-        public void onError(Throwable e) {
+        public void onError(ApiException e) {
             super.onError(e);
             tvMsg.setText("失败：\n" + e.toString());
         }
@@ -136,15 +137,16 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
                     public void onProgress(final long currentBytesCount, final long totalBytesCount) {
 
                 /*回到主线程中，可通过timer等延迟或者循环避免快速刷新数据*/
-                        Observable.just(currentBytesCount).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
-
-                            @Override
-                            public void accept(Long aLong) {
-                                tvMsg.setText("提示:上传中");
-                                progressBar.setMax((int) totalBytesCount);
-                                progressBar.setProgress((int) currentBytesCount);
-                            }
-                        });
+                        Observable.just(currentBytesCount)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Consumer<Long>() {
+                                    @Override
+                                    public void accept(Long aLong) throws Exception {
+                                        tvMsg.setText("提示:上传中");
+                                        progressBar.setMax((int) totalBytesCount);
+                                        progressBar.setProgress((int) currentBytesCount);
+                                    }
+                                });
                     }
                 }));
         UploadApi uplaodApi = new UploadApi(httpOnNextListener, this);
@@ -165,7 +167,7 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
         }
 
         @Override
-        public void onError(Throwable e) {
+        public void onError(ApiException e) {
             super.onError(e);
             tvMsg.setText("失败：" + e.toString());
         }
@@ -196,35 +198,34 @@ public class MainActivity extends RxAppCompatActivity implements View.OnClickLis
 
         HttpPostService apiService = retrofit.create(HttpPostService.class);
         Observable<RetrofitEntity> observable = apiService.getAllVedioBy(true);
-        observable.subscribeOn(Schedulers.io()).unsubscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        new Observer<RetrofitEntity>() {
-                            @Override
-                            public void onComplete() {
-                                if (pd != null && pd.isShowing()) {
-                                    pd.dismiss();
-                                }
-                            }
+        observable.subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<RetrofitEntity>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        pd.show();
+                    }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                if (pd != null && pd.isShowing()) {
-                                    pd.dismiss();
-                                }
-                            }
+                    @Override
+                    public void onNext(RetrofitEntity retrofitEntity) {
+                        tvMsg.setText("无封装：\n" + retrofitEntity.getData().toString());
+                    }
 
-                            @Override
-                            public void onSubscribe(Disposable d) {
-                                pd.show();
-                            }
-
-                            @Override
-                            public void onNext(RetrofitEntity retrofitEntity) {
-                                tvMsg.setText("无封装：\n" + retrofitEntity.getData().toString());
-                            }
+                    @Override
+                    public void onError(Throwable e) {
+                        if (pd != null && pd.isShowing()) {
+                            pd.dismiss();
                         }
+                    }
 
-                );
+                    @Override
+                    public void onComplete() {
+                        if (pd != null && pd.isShowing()) {
+                            pd.dismiss();
+                        }
+                    }
+                });
     }
 
 

@@ -3,9 +3,9 @@ package com.wzgiceman.rxretrofitlibrary.retrofit_rx.download;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.listener.HttpDownOnNextListener;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Transient;
-import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * apk下载请求数据基础类

@@ -1,7 +1,6 @@
 package com.example.retrofit.activity;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 
@@ -35,10 +34,10 @@ public class DownLaodActivity extends AppCompatActivity {
         listData=dbUtil.queryDownAll();
         /*第一次模拟服务器返回数据掺入到数据库中*/
         if(listData.isEmpty()){
-            String[] downUrl=new String[]{"http://www.izaodao.com/app/izaodao_app.apk",
-                    "http://download.fir.im/v2/app/install/572eec6fe75e2d7a05000008?download_token=572bcb03dad2eed7c758670fd23b5ac4"};
+            String[] downUrl=new String[]{"http://imtt.dd.qq.com/16891/8425CE151B264EDB6ED0C2B136CDE2E1.apk?fsname=com.litetrace.bluetooth.light3_3.7.2_372.apk&csr=1bbd",
+                    "http://imtt.dd.qq.com/16891/6279BBEA447C02A63DBE95C76CE8A72D.apk?fsname=com.litetrace.smecontroller_1.2.2_122.apk&csr=1bbd"};
             for (int i = 0; i < downUrl.length; i++) {
-                File outputFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                File outputFile = new File(getCacheDir().getAbsolutePath(),
                         "test"+i + ".apk");
                 DownInfo apkApi=new DownInfo(downUrl[i]);
                 apkApi.setId(i);

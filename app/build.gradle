@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion ANDROID_BUILD_SDK_VERSION as int
+    buildToolsVersion ANDROID_BUILD_TOOLS_VERSION
 
     defaultConfig {
         applicationId "com.example.retrofit"
-        minSdkVersion 16
-        targetSdkVersion 27
+        minSdkVersion ANDROID_BUILD_MIN_SDK_VERSION as int
+        targetSdkVersion ANDROID_BUILD_TARGET_SDK_VERSION as int
         versionCode 1
         versionName "1.0"
     }
@@ -24,10 +24,10 @@ android {
 
 dependencies {
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:27.0.2'
+    compile 'com.android.support:appcompat-v7:' + ANDROID_SUPPORT_VERSION
     compile 'com.daimajia.numberprogressbar:library:1.2@aar'
-    compile 'com.github.bumptech.glide:glide:3.6.1'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.jude:easyrecyclerview:4.2.6'
-    compile 'com.android.support:recyclerview-v7:27.0.2'
+    compile 'com.android.support:recyclerview-v7:' + ANDROID_SUPPORT_VERSION
     compile project(':rxretrofitlibrary')
 }

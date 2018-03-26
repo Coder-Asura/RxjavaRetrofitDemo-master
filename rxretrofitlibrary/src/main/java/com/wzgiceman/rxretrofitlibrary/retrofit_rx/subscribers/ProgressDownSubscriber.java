@@ -1,6 +1,5 @@
 package com.wzgiceman.rxretrofitlibrary.retrofit_rx.subscribers;
 
-
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.download.DownInfo;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.download.DownLoadListener.DownloadProgressListener;
 import com.wzgiceman.rxretrofitlibrary.retrofit_rx.download.DownState;
