@@ -1,3 +1,10 @@
+# 与原库的不同
+* 切换到 Retrofit2 + Rxjava2 + RxLifeCycle2
+* 新定义预处理 http请求 异常 ApiException
+* 去除 HttpOnNextListener 弱引用，防止部分请求时没有正确回调
+* 更新 Demo 示例
+* 更好的支持泛型
+
 # Retrofit+Rxjava+okhttp封装
 
 ![Preview](https://github.com/wzgiceman/RxjavaRetrofitDemo-string-master/blob/master/gif/rxretrofit.gif)
